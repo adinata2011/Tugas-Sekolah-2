@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PPDB SMP Angkasa 2026/2027 | Gapai Cakrawala Barumu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Poppins', sans-serif; scroll-behavior: smooth; }
+        
+        /* Anime Sky Animation */
+        .anime-sky {
+            background: linear-gradient(180deg, #4facfe 0%, #00f2fe 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cloud {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.4;
+            filter: blur(50px);
+            animation: float 25s infinite linear;
+        }
+
+        @keyframes float {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(100vw); }
+        }
+
+        /* WA Bounce Animation */
+        @keyframes custom-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .animate-bounce-wa {
+            animation: custom-bounce 2s infinite ease-in-out;
+        }
+
+        .wa-glow {
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.6);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* Custom Quiz Styles */
+        .quiz-container { 
+            background: #1e1e1e; 
+            border: 1px solid #333; 
+        }
+        .question-box { 
+            background: #252525; 
+            border-left: 5px solid #bb86fc; 
+        }
+        .options label { 
+            background: #2c2c2c; 
+            border: 1px solid transparent; 
+        }
+        .options label:hover { 
+            background: #383838; 
+            border-color: #bb86fc; 
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+
+    <div id="login-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+        <div class="bg-white w-full max-w-md p-8 rounded-3xl shadow-2xl relative mx-4">
+            <button onclick="toggleLogin()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 text-2xl font-bold">&times;</button>
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-extrabold text-blue-600">Selamat Datang! 🚀</h2>
+                <p class="text-sm text-slate-500">Silakan masuk ke akun PPDB kamu</p>
+            </div>
+            <form class="space-y-4" onsubmit="event.preventDefault(); alert('Fungsi login belum dihubungkan ke database!');">
+                <div>
+                    <label class="text-sm font-bold text-slate-700 block mb-1">Username / NISN</label>
+                    <input type="text" placeholder="Masukkan username atau NISN" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition text-sm" required>
+                </div>
+                <div>
+                    <label class="text-sm font-bold text-slate-700 block mb-1">Password</label>
+                    <input type="password" placeholder="••••••••" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition text-sm" required>
+                </div>
+                <div class="flex justify-between items-center text-xs">
+                    <label class="flex items-center text-slate-600 cursor-pointer">
+                        <input type="checkbox" class="mr-1 accent-blue-500"> Ingat saya
+                    </label>
+                    <a href="#" class="text-blue-500 hover:underline font-semibold">Lupa password?</a>
+                </div>
+                <button type="submit" class="w-full bg-blue-500 text-white py-3 rounded-xl font-bold hover:bg-blue-600 transition shadow-lg shadow-blue-200">MASUK</button>
+            </form>
+            <div class="text-center mt-6 text-sm text-slate-500">
+                Belum punya akun? <a href="#" class="text-blue-500 font-bold hover:underline">Daftar sekarang</a>
+            </div>
+        </div>
+    </div>
+
+    <header class="anime-sky min-h-screen flex flex-col items-center justify-center text-white p-6 relative">
+        <div class="cloud w-64 h-20 top-20 left-0"></div>
+        <div class="cloud w-96 h-32 top-60 right-0" style="animation-duration: 40s;"></div>
+
+        <nav class="absolute top-0 w-full p-8 flex justify-between items-center max-w-7xl z-20">
+            <div class="text-2xl font-extrabold italic tracking-tighter">SMP ANGKASA 🚀</div>
+            <div class="hidden md:flex space-x-8 font-semibold items-center">
+                <a href="#tentang" class="hover:text-yellow-300 transition">Tentang</a>
+                <a href="#ekskul" class="hover:text-yellow-300 transition">Ekskul</a>
+                <a href="#alur" class="hover:text-yellow-300 transition">Alur</a>
+                <button onclick="openQuiz()" class="hover:text-yellow-300 transition">Mulai Kuis</button>
+                <button onclick="toggleLogin()" class="bg-white text-blue-600 px-6 py-2 rounded-full font-bold hover:bg-yellow-300 hover:text-blue-900 transition-all shadow-lg">LOGIN</button>
+            </div>
+        </nav>
+
+        <div class="relative z-10 text-center">
+            <span class="bg-white/20 px-4 py-1 rounded-full text-sm font-bold mb-4 inline-block">PENERIMAAN SISWA BARU 2026/2027</span>
+            <h1 class="text-5xl md:text-8xl font-extrabold mb-6 leading-tight">Mulai <span class="text-yellow-300">Petualangan</span><br>Hebatmu!</h1>
+            <p class="text-lg md:text-xl max-w-2xl mx-auto mb-10 opacity-90">
+                Terbang lebih tinggi bersama kurikulum futuristik dan komunitas kreatif di SMP Angkasa.
+            </p>
+            <div class="flex flex-col md:flex-row gap-4 justify-center">
+                <a href="#" class="bg-yellow-400 text-blue-900 px-10 py-4 rounded-full font-extrabold shadow-xl hover:bg-white transition-all transform hover:scale-105">DAFTAR SEKARANG</a>
+                <a href="#ekskul" class="bg-white text-blue-600 px-10 py-4 rounded-full font-bold hover:bg-yellow-300 hover:text-blue-900 transition-all shadow-lg">LIHAT EKSKUL</a>
+                <button onclick="openQuiz()" class="glass-card px-10 py-4 rounded-full font-bold hover:bg-white hover:text-blue-500 transition-all">IKUTI KUIS</button>
+            </div>
+        </div>
+    </header>
+
+    <section id="ekskul" class="py-24 px-6 max-w-7xl mx-auto">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-extrabold text-blue-600 mb-2">Pilih "Skill Tree" Kamu</h2>
+            <p class="text-slate-500 italic text-lg">Kembangkan potensi unikmu seperti karakter utama!</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+            <div class="bg-white rounded-3xl shadow-2xl overflow-hidden group hover:ring-4 hover:ring-blue-400 transition-all">
+                <div class="h-56 bg-slate-200 flex items-center justify-center text-6xl group-hover:scale-110 transition-transform"><img src="https://i.pinimg.com/736x/a7/d3/ee/a7d3ee622dd7ad44d089dd81d37cb3e8.jpg" alt="Cyber Robotics" class="w-full h-full object-cover"></div>
+                <div class="p-8">
+                    <h3 class="text-2xl font-bold mb-4 text-blue-600">Cyber Robotics</h3>
+                    <div class="space-y-4 text-sm font-bold uppercase tracking-wider">
+                        <div>
+                            <div class="flex justify-between mb-1">Logic <span class="text-blue-500">SSS</span></div>
+                            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                                <div class="bg-blue-500 h-full w-full"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">Creative <span class="text-blue-400">A+</span></div>
+                            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                                <div class="bg-blue-400 h-full w-4/5"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-2xl overflow-hidden group hover:ring-4 hover:ring-pink-400 transition-all">
+                <div class="h-56 bg-slate-200 flex items-center justify-center text-6xl group-hover:scale-110 transition-transform"><img src="https://i.pinimg.com/736x/e8/3c/3d/e83c3dd9b297ab78f304e64ffef74e5d.jpg" alt="Digital Arts" class="w-full h-full object-cover"></div>
+                <div class="p-8">
+                    <h3 class="text-2xl font-bold mb-4 text-pink-600">Digital Arts</h3>
+                    <div class="space-y-4 text-sm font-bold uppercase tracking-wider">
+                        <div>
+                            <div class="flex justify-between mb-1">Imagination <span class="text-pink-500">SSS</span></div>
+                            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                                <div class="bg-pink-500 h-full w-full"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">Skill <span class="text-pink-400">S</span></div>
+                            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                                <div class="bg-pink-400 h-full w-[90%]"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-2xl overflow-hidden group hover:ring-4 hover:ring-orange-400 transition-all">
+                <div class="h-56 bg-slate-200 flex items-center justify-center text-6xl group-hover:scale-110 transition-transform"><img src="https://i.pinimg.com/736x/a2/7f/d1/a27fd1b966fe0c8c90537c7a94e5cc88.jpg" alt="Aero Hoops" class="w-full h-full object-cover"></div>
+                <div class="p-8">
+                    <h3 class="text-2xl font-bold mb-4 text-orange-600">Aero Hoops</h3>
+                    <div class="space-y-4 text-sm font-bold uppercase tracking-wider">
+                        <div>
+                            <div class="flex justify-between mb-1">Stamina <span class="text-orange-500">S+</span></div>
+                            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                                <div class="bg-orange-500 h-full w-[95%]"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">Teamwork <span class="text-orange-400">SSS</span></div>
+                            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                                <div class="bg-orange-400 h-full w-full"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="area-kuis" class="py-24 px-6 bg-[#121212] hidden relative min-h-screen text-white">
+        <button onclick="closeQuiz()" class="absolute top-8 right-8 text-white/50 hover:text-white text-4xl font-bold transition">&times;</button>
+        
+        <div class="quiz-container max-w-2xl mx-auto p-8 md:p-10 rounded-3xl shadow-2xl">
+            <h2 class="text-3xl font-extrabold text-center text-[#bb86fc] uppercase tracking-wider mb-2">Kuis Jam Terbang</h2>
+            <p class="text-center text-[#03dac6] text-sm mb-10">Uji Pengetahuan Seputar Kultur Internet & Game</p>
+            
+            <form id="quizForm">
+                
+                <div id="page1" class="quiz-page block">
+                    <div class="question-box mb-6 p-5 rounded-lg">
+                        <span class="font-bold block mb-3">1. Siapa Nama Asli Mas Amba dalam dunia meme?</span>
+                        <div class="flex flex-col gap-2 text-sm options">
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q1" value="0" class="mr-2"> A. Holliwud</label>
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q1" value="5" class="mr-2"> B. Perrel Brown</label>
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q1" value="0" class="mr-2"> C. Brandon Currington</label>
+                        </div>
+                    </div>
+                    <div class="question-box mb-6 p-5 rounded-lg">
+                        <span class="font-bold block mb-3">2. Dimana Ngawi Berasal?</span>
+                        <div class="flex flex-col gap-2 text-sm options">
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q2" value="5" class="mr-2"> A. Jawa Timur</label>
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q2" value="0" class="mr-2"> B. Jawa Tengah</label>
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q2" value="0" class="mr-2"> C. Jawa Barat</label>
+                        </div>
+                    </div>
+                    <div class="question-box mb-6 p-5 rounded-lg">
+                        <span class="font-bold block mb-3">3. Apa Nama STM Yang Terkenal di Ngawi?</span>
+                        <div class="flex flex-col gap-2 text-sm options">
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q3" value="0" class="mr-2"> A. STM Ngawi All Star</label>
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q3" value="0" class="mr-2"> B. Suki Liar 777</label>
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q3" value="5" class="mr-2"> C. STM KAPAL KARAM 705</label>
+                        </div>
+                    </div>
+                    <div class="question-box mb-6 p-5 rounded-lg">
+                        <span class="font-bold block mb-3">4. Apa Kepanjangan SUKI?</span>
+                        <div class="flex flex-col gap-2 text-sm options">
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q4" value="0" class="mr-2"> A. Entahlah</label>
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q4" value="0" class="mr-2"> B. Kamus Besar Jomok Indonesia</label>
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q4" value="5" class="mr-2"> C. Shit Meme Untuk Kebutuhan Iman</label>
+                        </div>
+                    </div>
+                    <div class="question-box mb-6 p-5 rounded-lg">
+                        <span class="font-bold block mb-3">5. Siapa Pelopor MEME awal dalam list berikut?</span>
+                        <div class="flex flex-col gap-2 text-sm options">
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q5" value="0" class="mr-2"> A. Reza Arap</label>
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q5" value="5" class="mr-2"> B. ERPAN</label>
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q5" value="0" class="mr-2"> C. Reza Auditore</label>
+                        </div>
+                    </div>
+                    <div class="flex justify-end mt-6">
+                        <button type="button" onclick="nextPage(1, 2)" class="bg-[#bb86fc] text-black px-6 py-2 rounded-full font-bold hover:scale-105 transition">Berikutnya ➔</button>
+                    </div>
+                </div>
+
+                <div id="page2" class="quiz-page hidden">
+                    <div class="question-box mb-6 p-5 rounded-lg">
+                        <span class="font-bold block mb-3">6. Siapa Nama Asli Yes King?</span>
+                        <div class="flex flex-col gap-2 text-sm options">
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q6" value="5" class="mr-2"> A. Michael Willis Heard</label>
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q6" value="0" class="mr-2"> B. Perrel Brown</label>
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q6" value="0" class="mr-2"> C. Holliwud</label>
+                        </div>
+                    </div>
+                    <div class="question-box mb-6 p-5 rounded-lg">
+                        <span class="font-bold block mb-3">7. Kapan Masa Jayanya Ngawi Empire?</span>
+                        <div class="flex flex-col gap-2 text-sm options">
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q7" value="0" class="mr-2"> A. Abad 1-5</label>
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q7" value="5" class="mr-2"> B. Abad 9-18</label>
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q7" value="0" class="mr-2"> C. Abad 1-19</label>
+                        </div>
+                    </div>
+                    <div class="question-box mb-6 p-5 rounded-lg">
+                        <span class="font-bold block mb-3">8. Mengapa Ngawi Runtuh?</span>
+                        <div class="flex flex-col gap-2 text-sm options">
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q8" value="5" class="mr-2"> A. Kudeta Suki Liar</label>
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q8" value="0" class="mr-2"> B. Perang Muani Abad 3</label>
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q8" value="0" class="mr-2"> C. Perang Albert Rusdi 777</label>
+                        </div>
+                    </div>
+                    <div class="question-box mb-6 p-5 rounded-lg">
+                        <span class="font-bold block mb-3">9. Nama Awal Meme JMK adalah?</span>
+                        <div class="flex flex-col gap-2 text-sm options">
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q9" value="0" class="mr-2"> A. Shitpost</label>
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q9" value="0" class="mr-2"> B. Suki</label>
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q9" value="5" class="mr-2"> C. Sungut Lele</label>
+                        </div>
+                    </div>
+                    <div class="question-box mb-6 p-5 rounded-lg">
+                        <span class="font-bold block mb-3">10. Siapa tokoh tari legendaris dengan bandana merah yang sempat viral?</span>
+                        <div class="flex flex-col gap-2 text-sm options">
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q10" value="0" class="mr-2"> A. Amba</label>
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q10" value="0" class="mr-2"> B. Rehan Whagsaff</label>
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q10" value="5" class="mr-2"> C. Ricardo Milos</label>
+                        </div>
+                    </div>
+                    <div class="flex justify-between mt-6">
+                        <button type="button" onclick="prevPage(2, 1)" class="bg-white/20 text-white px-6 py-2 rounded-full font-bold hover:bg-white/30 transition">⬅ Kembali</button>
+                        <button type="button" onclick="nextPage(2, 3)" class="bg-[#bb86fc] text-black px-6 py-2 rounded-full font-bold hover:scale-105 transition">Berikutnya ➔</button>
+                    </div>
+                </div>
+
+                <div id="page3" class="quiz-page hidden">
+                    <div class="question-box mb-6 p-5 rounded-lg">
+                        <span class="font-bold block mb-3">11. Nama Robot yang Meneror Warga Ngawi?</span>
+                        <div class="flex flex-col gap-2 text-sm options">
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q11" value="0" class="mr-2"> A. Imutron</label>
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q11" value="5" class="mr-2"> B. Ambatron</label>
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q11" value="0" class="mr-2"> C. Rusditron</label>
+                        </div>
+                    </div>
+                    <div class="question-box mb-6 p-5 rounded-lg">
+                        <span class="font-bold block mb-3">12. Apa Kepanjangan KKBJ?</span>
+                        <div class="flex flex-col gap-2 text-sm options">
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q12" value="5" class="mr-2"> A. Kamus Besar Bahasa Jomok</label>
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q12" value="0" class="mr-2"> B. Kamus Besar Bahasa Indonesia Jomok</label>
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q12" value="0" class="mr-2"> C. Kamus Besar Bahasa Jember</label>
+                        </div>
+                    </div>
+                    <div class="question-box mb-6 p-5 rounded-lg">
+                        <span class="font-bold block mb-3">13. Siapa Member Sungut Lele Awal?</span>
+                        <div class="flex flex-col gap-2 text-sm options">
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q13" value="0" class="mr-2"> A. Reza Arap dan Rusdi</label>
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q13" value="5" class="mr-2"> B. Ricardo Milos dan Rehan Whagsaff</label>
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q13" value="0" class="mr-2"> C. Reza Auditore dan Amba</label>
+                        </div>
+                    </div>
+                    <div class="question-box mb-6 p-5 rounded-lg">
+                        <span class="font-bold block mb-3">14. Warna Kulit Mas Rian Unjuk Bakat?</span>
+                        <div class="flex flex-col gap-2 text-sm options">
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q14" value="5" class="mr-2"> A. Hijau</label>
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q14" value="0" class="mr-2"> B. Hitam</label>
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q14" value="0" class="mr-2"> C. Coklat</label>
+                        </div>
+                    </div>
+                    <div class="question-box mb-6 p-5 rounded-lg">
+                        <span class="font-bold block mb-3">15. Siapa rival terberat Rusdi dalam dunia meme perebutan pengaruh?</span>
+                        <div class="flex flex-col gap-2 text-sm options">
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q15" value="5" class="mr-2"> A. Mas Amba</label>
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q15" value="0" class="mr-2"> B. GigaChad</label>
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q15" value="0" class="mr-2"> C. Kak Gem</label>
+                        </div>
+                    </div>
+                    <div class="flex justify-between mt-6">
+                        <button type="button" onclick="prevPage(3, 2)" class="bg-white/20 text-white px-6 py-2 rounded-full font-bold hover:bg-white/30 transition">⬅ Kembali</button>
+                        <button type="button" onclick="nextPage(3, 4)" class="bg-[#bb86fc] text-black px-6 py-2 rounded-full font-bold hover:scale-105 transition">Berikutnya ➔</button>
+                    </div>
+                </div>
+
+                <div id="page4" class="quiz-page hidden">
+                    <div class="question-box mb-6 p-5 rounded-lg">
+                        <span class="font-bold block mb-3">16. Lagu Deni Caknan yang Rame di Komunitas?</span>
+                        <div class="flex flex-col gap-2 text-sm options">
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q16" value="5" class="mr-2"> A. Sigar</label>
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q16" value="0" class="mr-2"> B. Jomok Happy</label>
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q16" value="0" class="mr-2"> C. Jomblo Happy</label>
+                        </div>
+                    </div>
+                    <div class="question-box mb-6 p-5 rounded-lg">
+                        <span class="font-bold block mb-3">17. Lagu yang Diciptakan Oleh Ndarboy Gank?</span>
+                        <div class="flex flex-col gap-2 text-sm options">
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q17" value="0" class="mr-2"> A. Dj Ambatukam</label>
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q17" value="0" class="mr-2"> B. Sigar</label>
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q17" value="5" class="mr-2"> C. Aku Iki Anak Lanang</label>
+                        </div>
+                    </div>
+                    <div class="question-box mb-6 p-5 rounded-lg">
+                        <span class="font-bold block mb-3">18. Teman Paling Dekat Rusdi Siapa?</span>
+                        <div class="flex flex-col gap-2 text-sm options">
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q18" value="0" class="mr-2"> A. Saiful</label>
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q18" value="0" class="mr-2"> B. Amba</label>
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q18" value="5" class="mr-2"> C. Si Imut</label>
+                        </div>
+                    </div>
+                    <div class="question-box mb-6 p-5 rounded-lg">
+                        <span class="font-bold block mb-3">19. Nama Lagu Yang Dibuat Oleh Band Rusdi?</span>
+                        <div class="flex flex-col gap-2 text-sm options">
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q19" value="0" class="mr-2"> A. Jomok Happy</label>
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q19" value="5" class="mr-2"> B. BOOL 5</label>
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q19" value="0" class="mr-2"> C. Aku Iki Anak Lanang</label>
+                        </div>
+                    </div>
+                    <div class="question-box mb-6 p-5 rounded-lg">
+                        <span class="font-bold block mb-3">20. Apa sebutan untuk wilayah tempat berkumpulnya para sepuh meme Ngawi?</span>
+                        <div class="flex flex-col gap-2 text-sm options">
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q20" value="5" class="mr-2"> A. Kerajaan Ngawi</label>
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q20" value="0" class="mr-2"> B. Bekasi Core</label>
+                            <label class="p-3 rounded-lg cursor-pointer"><input type="radio" name="q20" value="0" class="mr-2"> C. Depok Pride</label>
+                        </div>
+                    </div>
+                    <div class="flex justify-between mt-6">
+                        <button type="button" onclick="prevPage(4, 3)" class="bg-white/20 text-white px-6 py-2 rounded-full font-bold hover:bg-white/30 transition">⬅ Kembali</button>
+                        <button type="button" onclick="calculateScore()" class="bg-[#03dac6] text-black px-6 py-2 rounded-full font-bold hover:scale-105 transition">KIRIM JAWABAN</button>
+                    </div>
+                </div>
+            </form>
+
+            <div id="result" class="mt-8 p-5 rounded-lg text-center text-xl font-bold border-2 border-[#03dac6] bg-[#03dac6]/10 text-[#03dac6] hidden"></div>
+        </div>
+    </section>
+
+    <footer class="bg-slate-900 text-white pt-10 pb-6 px-6">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center border-b border-white/10 pb-6 mb-6 text-center md:text-left">
+            <div>
+                <h2 class="text-xl font-extrabold italic mb-1 tracking-tighter">SMP ANGKASA</h2>
+                <p class="text-xs text-slate-400">Jl. Dirgantara No. 01, Jakarta Pusat. <br> "Terbang Tinggi Menuju Masa Depan."</p>
+            </div>
+            <div class="mt-4 md:mt-0 flex space-x-4 text-xs text-slate-300 uppercase tracking-wider font-bold">
+                <a href="https://www.instagram.com/adinata_2011/" class="hover:text-yellow-400 transition">Instagram</a>
+                <a href="https://www.youtube.com/@adinata2011" class="hover:text-yellow-400 transition">YouTube</a>
+                <a href="https://tiktok.com/@adinata_2010" target="_blank" class="hover:text-yellow-400 transition">TikTok</a>
+            </div>
+        </div>
+        
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-xs text-slate-600 gap-2">
+            <p>&copy; 2026 <span class="text-slate-400">SMP Angkasa</span>. Seluruh Hak Cipta Dilindungi Undang-Undang.</p>
+            <p class="italic text-xs">dibuat oleh Bagas Adinata Putratama 🚀</p>
+        </div>
+    </footer>
+
+   <div class="fixed bottom-8 left-8 z-50 animate-bounce-wa">
+        <a href="https://wa.me/6285194970008?text=Halo%20Admin%20SMP%20Angkasa,%20saya%20ingin%20bertanya%20mengenai%20PPDB" 
+           target="_blank" 
+           class="group flex items-center flex-row-reverse"> <span class="ml-3 bg-white text-slate-800 px-4 py-2 rounded-xl shadow-xl font-bold opacity-0 group-hover:opacity-100 transition-all duration-300 border-2 border-green-500 hidden md:block">
+                Tanya Admin PPDB
+            </span>
+
+            <div class="bg-green-500 p-5 rounded-full shadow-2xl wa-glow transition-transform hover:scale-110 active:scale-95 text-white">
+                <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 2.079.19h.004c.004 0 .006 0 .01 0 1.015-.015 2.2-.423 2.556-.577.297-.148.446-.223.446-.223z"/>
+                </svg>
+            </div>
+        </a>
+    </div>
+
+    <script>
+        // Fungsi Membuka Kuis
+        function openQuiz() {
+            document.getElementById('area-kuis').classList.remove('hidden');
+            document.getElementById('area-kuis').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Fungsi Menutup Kuis
+        function closeQuiz() {
+            document.getElementById('area-kuis').classList.add('hidden');
+        }
+
+        // Navigasi Ganti Halaman
+        function nextPage(current, next) {
+            document.getElementById(`page${current}`).classList.add('hidden');
+            document.getElementById(`page${next}`).classList.remove('hidden');
+        }
+
+        function prevPage(current, prev) {
+            document.getElementById(`page${current}`).classList.add('hidden');
+            document.getElementById(`page${prev}`).classList.remove('hidden');
+        }
+
+        // Kalkulasi Skor
+        function calculateScore() {
+            const form = document.getElementById('quizForm');
+            const formData = new FormData(form);
+            let totalScore = 0;
+
+            for (let value of formData.values()) {
+                totalScore += parseInt(value);
+            }
+
+            const resultDiv = document.getElementById('result');
+            resultDiv.classList.remove('hidden');
+            
+            let grade = "";
+            if (totalScore === 100) grade = "👑 LEVEL: Terlalu Dalam woilah";
+            else if (totalScore >= 75) grade = "🔥 LEVEL: Lumayan dalam";
+            else if (totalScore >= 50) grade = "🐍 LEVEL: Masih awal";
+            else grade = "🤡 LEVEL: Suki ngapain";
+
+            resultDiv.innerHTML = `SKOR AKHIR: ${totalScore} / 100 <br> <span style="font-size: 0.8em;">${grade}</span>`;
+            resultDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Fungsi Membuka/Menutup Login
+        function toggleLogin() {
+            const loginModal = document.getElementById('login-modal');
+            loginModal.classList.toggle('hidden');
+        }
+    </script>
+</body>
+</html>
